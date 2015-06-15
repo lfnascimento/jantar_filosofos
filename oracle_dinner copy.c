@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <errno.h>
-#include <assert.h>
+//#include <errno.h>
+//#include <assert.h>
 
 #define PHILOS 5
 #define DELAY 2
@@ -83,16 +83,18 @@ philosopher (void *num)
             grab_chopstick(id, left_chopstick, "left");
             //
         } else {
-            printf("Philosopher %d: eating.\n", id);
+            printf("Philosopher %d: COMENDO.\n", id);
             down_chopsticks(id, right_chopstick, left_chopstick, "direita");
             down_chopsticks(id, left_chopstick, left_chopstick, "esquerda");
             ph_num_aleatorio = rand() % 5;
+            //printf("Filoso %d esta PENSANDO\n",id);
         }
 
         grab_chopstick(id, right_chopstick, "right");
-        printf ("Philosopher %d: eating.\n", id);
+        printf ("Philosopher %d: COMENDO.\n", id);
         down_chopsticks(id, right_chopstick, left_chopstick, "direita");
         down_chopsticks(id, left_chopstick, left_chopstick, "esquerda");
+        //printf("Filosofo %d esta PENSANDO\n",id);
 
         //ph_num_aleatorio = rand() % 5;
         usleep (DELAY * (FOOD - f + 1));
@@ -123,7 +125,7 @@ grab_chopstick (int phil,
                 char *hand)
 {
     pthread_mutex_lock (&chopstick[c]);
-    printf ("Philosopher %d: got %s chopstick %d\n", phil, hand, c);
+    printf ("Philosopher %d FAMINTO: got %s chopstick %d\n", phil, hand, c);
 }
 
 void
@@ -133,6 +135,7 @@ down_chopsticks (int phil, int c1, int c2, char *hand)
     //if (phil != ph_num_aleatorio) {
         printf("Filosfo %d devolve o garfo %d da %s\n", phil, c1, hand);
         pthread_mutex_unlock(&chopstick[c1]);
+    printf("Filosofo %d esta PENSANDO\n",phil);
     //}
     //pthread_mutex_unlock (&chopstick[c2]);
 
