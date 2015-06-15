@@ -14,11 +14,11 @@ void pegaGarfo (int,
                      char *);
 void devolveGarfo (int,
                       int,
-                      int, char *);
+                        char *);
 int food_on_table ();
 
-pthread_mutex_t chopstick[NUMERO_FILOSOFOS];
-pthread_t philo[NUMERO_FILOSOFOS];
+pthread_mutex_t garfo[NUMERO_FILOSOFOS];
+pthread_t filo[NUMERO_FILOSOFOS];
 pthread_mutex_t food_lock;
 int sleep_seconds = 0;
 
@@ -37,11 +37,11 @@ main (int argn,
 
     pthread_mutex_init (&food_lock, NULL);
     for (i = 0; i < NUMERO_FILOSOFOS; i++)
-        pthread_mutex_init (&chopstick[i], NULL);
+        pthread_mutex_init (&garfo[i], NULL);
     for (i = 0; i < NUMERO_FILOSOFOS; i++)
-        pthread_create (&philo[i], NULL, filosofo, (void *)i);
+        pthread_create (&filo[i], NULL, filosofo, (void *)i);
     for (i = 0; i < NUMERO_FILOSOFOS; i++)
-        pthread_join (philo[i], NULL);
+        pthread_join (filo[i], NULL);
     return 0;
 }
 
@@ -74,28 +74,28 @@ filosofo (void *num)
         else
             pegaGarfo (id, garfoDireito, "direita ");
 
-        devolveGarfo(id, garfoDireito, garfoEsquerdo, "direita");
+        devolveGarfo(id, garfoDireito,  "direita");
         pegaGarfo (id, garfoDireito, "direita");
 
         if (filosofoAleatorio != id) {
-            devolveGarfo(id, garfoDireito, garfoEsquerdo, "direita");
+            devolveGarfo(id, garfoDireito,  "direita");
             pegaGarfo(id, garfoEsquerdo, "esquerda");
 
         } else {
             printf("Filosofo %d: COMENDO.\n", id);
-            devolveGarfo(id, garfoDireito, garfoEsquerdo, "direita");
-            devolveGarfo(id, garfoEsquerdo, garfoEsquerdo, "esquerda");
+            devolveGarfo(id, garfoDireito,  "direita");
+            devolveGarfo(id, garfoEsquerdo,  "esquerda");
             filosofoAleatorio = rand() % NUMERO_FILOSOFOS;
             printf("Filoso %d esta PENSANDO\n",id);
         }
 
         pegaGarfo(id, garfoDireito, "direita");
         printf ("Filosfo %d: COMENDO.\n", id);
-        devolveGarfo(id, garfoDireito, garfoEsquerdo, "direita");
-        devolveGarfo(id, garfoEsquerdo, garfoEsquerdo, "esquerda");
+        devolveGarfo(id, garfoDireito,  "direita");
+        devolveGarfo(id, garfoEsquerdo,  "esquerda");
         printf("Filosofo %d esta PENSANDO\n",id);
 
-        //usleep (DELAY * (FOOD - f + 1));
+        usleep (DELAY * (FOOD - f + 1));
     }
 
     printf ("Philosopher %d is done eating.\n", id);
@@ -118,23 +118,18 @@ food_on_table ()
 }
 
 void
-pegaGarfo (int phil,
-                int c,
-                char *hand)
+pegaGarfo (int filo,
+                int g,
+                char *lado)
 {
-    pthread_mutex_lock (&chopstick[c]);
-    printf ("Filosfo %d FAMINTO: pega  o garfo %d da %s\n", phil, c, hand);
+    pthread_mutex_lock (&garfo[g]);
+    printf ("Filosfo %d FAMINTO: pega  o garfo %d da %s\n", filo, g, lado);
 }
 
 void
-devolveGarfo (int phil, int c1, int c2, char *hand)
+devolveGarfo (int filo, int g, char *lado)
 
 {
-    //if (phil != ph_num_aleatorio) {
-        printf("Filosfo %d devolve o garfo %d da %s\n", phil, c1, hand);
-        pthread_mutex_unlock(&chopstick[c1]);
-    //printf("Filosofo %d esta PENSANDO\n",phil);
-    //}
-    //pthread_mutex_unlock (&chopstick[c2]);
-
+    pthread_mutex_unlock(&garfo[g]);
+    printf("Filosfo %d devolve o garfo %d da %s\n", filo, g, lado);
 }
