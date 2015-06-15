@@ -15,7 +15,7 @@ void grab_chopstick (int,
                      char *);
 void down_chopsticks (int,
                       int,
-                      int);
+                      int, char *);
 int food_on_table ();
 
 pthread_mutex_t chopstick[PHILOS];
@@ -67,31 +67,34 @@ philosopher (void *num)
            * before picking up the chopsticks, the other philosophers
            * may be able to eat their dishes and not deadlock.
              */
-        if (id == 1)
-            sleep (sleep_seconds);
+        //if (id == 1)
+          //  sleep (sleep_seconds);
 
         if (ph_num_aleatorio == id)
             grab_chopstick (id, left_chopstick, "left");
         else
             grab_chopstick (id, right_chopstick, "right ");
 
-        down_chopsticks(id, right_chopstick, left_chopstick);
+        down_chopsticks(id, right_chopstick, left_chopstick, "direita");
         grab_chopstick (id, right_chopstick, "right");
 
         if (ph_num_aleatorio != id) {
-            down_chopsticks(id, right_chopstick, left_chopstick);
+            down_chopsticks(id, right_chopstick, left_chopstick, "direita");
             grab_chopstick(id, left_chopstick, "left");
             //
         } else {
             printf("Philosopher %d: eating.\n", id);
-            down_chopsticks(id, right_chopstick, left_chopstick);
+            down_chopsticks(id, right_chopstick, left_chopstick, "direita");
+            down_chopsticks(id, left_chopstick, left_chopstick, "esquerda");
+            ph_num_aleatorio = rand() % 5;
         }
 
         grab_chopstick(id, right_chopstick, "right");
         printf ("Philosopher %d: eating.\n", id);
-        down_chopsticks(id, right_chopstick, left_chopstick);
+        down_chopsticks(id, right_chopstick, left_chopstick, "direita");
+        down_chopsticks(id, left_chopstick, left_chopstick, "esquerda");
 
-        ph_num_aleatorio = rand() % 5;
+        //ph_num_aleatorio = rand() % 5;
         usleep (DELAY * (FOOD - f + 1));
     }
 
@@ -124,13 +127,13 @@ grab_chopstick (int phil,
 }
 
 void
-down_chopsticks (int phil, int c1, int c2)
+down_chopsticks (int phil, int c1, int c2, char *hand)
 
 {
-    if (phil != ph_num_aleatorio) {
-        printf("Filosfo %d devolve o garfo %d da direita\n", phil, c1);
+    //if (phil != ph_num_aleatorio) {
+        printf("Filosfo %d devolve o garfo %d da %s\n", phil, c1, hand);
         pthread_mutex_unlock(&chopstick[c1]);
-    }
+    //}
     //pthread_mutex_unlock (&chopstick[c2]);
 
 }
