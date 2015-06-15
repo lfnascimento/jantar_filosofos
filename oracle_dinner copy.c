@@ -22,6 +22,9 @@ pthread_t filo[NUMERO_FILOSOFOS];
 pthread_mutex_t food_lock;
 int sleep_seconds = 0;
 
+int tempoComendo;
+int tempoPensando;
+
 int filosofoAleatorio;
 
 int
@@ -31,6 +34,12 @@ main (int argn,
     int i;
 
     filosofoAleatorio = rand() % NUMERO_FILOSOFOS;
+
+    printf("Informe o tempo gasto do filosfo pensando:\n");
+    scanf("%d", &tempoPensando);
+
+    printf("Informe o tempo gasto do filosfo comendo:\n");
+    scanf("%d", &tempoComendo);
 
     if (argn == 2)
         sleep_seconds = atoi (argv[1]);
@@ -53,6 +62,7 @@ filosofo (void *num)
 
     id = (int)num;
     printf ("Filosofo %d esta pensando.\n", id);
+    sleep(tempoPensando);
     garfoDireito = id;
     garfoEsquerdo = id + 1;
 
@@ -83,17 +93,22 @@ filosofo (void *num)
 
         } else {
             printf("Filosofo %d: COMENDO.\n", id);
+            sleep(2);
             devolveGarfo(id, garfoDireito,  "direita");
             devolveGarfo(id, garfoEsquerdo,  "esquerda");
             filosofoAleatorio = rand() % NUMERO_FILOSOFOS;
             printf("Filoso %d esta PENSANDO\n",id);
+            sleep(tempoPensando);
         }
 
         pegaGarfo(id, garfoDireito, "direita");
         printf ("Filosfo %d: COMENDO.\n", id);
+        sleep(2);
+
         devolveGarfo(id, garfoDireito,  "direita");
         devolveGarfo(id, garfoEsquerdo,  "esquerda");
         printf("Filosofo %d esta PENSANDO\n",id);
+        sleep(tempoPensando);
 
         usleep (DELAY * (FOOD - f + 1));
     }
