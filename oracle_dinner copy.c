@@ -52,7 +52,7 @@ filosofo (void *num)
     int i, garfoEsquerdo, garfoDireito, f;
 
     id = (int)num;
-    printf ("Philosopher %d is done thinking and now ready to eat.\n", id);
+    printf ("Filosofo %d esta pensando.\n", id);
     garfoDireito = id;
     garfoEsquerdo = id + 1;
 
