@@ -17,8 +17,11 @@ void devolveGarfo (int,
                         char *);
 int food_on_table ();
 
-pthread_mutex_t garfo[NUMERO_FILOSOFOS];
-pthread_t filo[NUMERO_FILOSOFOS];
+int numero_filosofos;
+
+pthread_mutex_t *garfo;
+pthread_t *filo;
+
 pthread_mutex_t food_lock;
 int sleep_seconds = 0;
 
@@ -33,7 +36,13 @@ main (int argn,
 {
     int i;
 
-    filosofoAleatorio = rand() % NUMERO_FILOSOFOS;
+    printf("Informe o numero de filosofos:\n");
+    scanf("%d", &numero_filosofos);
+
+    filosofoAleatorio = rand() % numero_filosofos;
+
+    garfo = (pthread_mutex_t *) malloc(numero_filosofos*sizeof(pthread_mutex_t));
+    filo = (pthread_t *) malloc(numero_filosofos*sizeof(pthread_t));
 
     printf("Informe o tempo gasto do filosfo pensando:\n");
     scanf("%d", &tempoPensando);
@@ -45,11 +54,11 @@ main (int argn,
         sleep_seconds = atoi (argv[1]);
 
     pthread_mutex_init (&food_lock, NULL);
-    for (i = 0; i < NUMERO_FILOSOFOS; i++)
+    for (i = 0; i < numero_filosofos; i++)
         pthread_mutex_init (&garfo[i], NULL);
-    for (i = 0; i < NUMERO_FILOSOFOS; i++)
+    for (i = 0; i < numero_filosofos; i++)
         pthread_create (&filo[i], NULL, filosofo, (void *)i);
-    for (i = 0; i < NUMERO_FILOSOFOS; i++)
+    for (i = 0; i < numero_filosofos; i++)
         pthread_join (filo[i], NULL);
     return 0;
 }
@@ -67,7 +76,7 @@ filosofo (void *num)
     garfoEsquerdo = id + 1;
 
     /* Wrap around the chopsticks. */
-    if (garfoEsquerdo == NUMERO_FILOSOFOS)
+    if (garfoEsquerdo == numero_filosofos)
         garfoEsquerdo = 0;
 
     while (f = food_on_table ()) {
@@ -96,7 +105,7 @@ filosofo (void *num)
             sleep(2);
             devolveGarfo(id, garfoDireito,  "direita");
             devolveGarfo(id, garfoEsquerdo,  "esquerda");
-            filosofoAleatorio = rand() % NUMERO_FILOSOFOS;
+            filosofoAleatorio = rand() % numero_filosofos;
             printf("Filoso %d esta PENSANDO\n",id);
             sleep(tempoPensando);
         }
