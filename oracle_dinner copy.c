@@ -122,7 +122,7 @@ filosofo (void *num)
         usleep (DELAY * (FOOD - f + 1));
     }
 
-    printf ("Philosopher %d is done eating.\n", id);
+    printf ("Filosofo %d acabou de comer.\n", id);
     return (NULL);
 }
 
