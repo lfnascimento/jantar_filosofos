@@ -5,9 +5,12 @@
 
 
 #define NUMERO_FILOSOFOS 5
+//Nao eh necessario essa variavel estatica ATRASO
 #define ATRASO 2
-#define COMIDA 50
+//Variavel estatica que limita o loop(comida na mesa) dos filosfos
+#define COMIDA 25
 
+//Declaracao das funcoes
 void *filosofo (void *id);
 void pegaGarfo (int, int, char *);
 void devolveGarfo (int, int, char *);
@@ -38,6 +41,7 @@ int main (int argn, char **argv)
     printf("Informe o numero de filosofos:\n");
     scanf("%d", &numero_filosofos);
 
+    //Escolhe um filosofo aleatorio
     filosofoAleatorio = rand() % numero_filosofos;
 
     garfo = (pthread_mutex_t *) malloc(numero_filosofos*sizeof(pthread_mutex_t));
@@ -63,7 +67,7 @@ int main (int argn, char **argv)
         pthread_join (filo[i], NULL);
     return 0;
 }
-
+//Funcao que simula o filosofo
 void *filosofo (void *num)
 {
     int id;
@@ -79,17 +83,25 @@ void *filosofo (void *num)
     if (garfoEsquerdo == numero_filosofos)
         garfoEsquerdo = 0;
 
+    //Enquanto tiver comida na mesa
     while (f = comidaNaMesa()) {
 
-
+        //Um filosofo aleatorio pega o garfo da esquerda
         if (filosofoAleatorio == id)
             pegaGarfo (id, garfoEsquerdo, "esquerda");
         else
             pegaGarfo (id, garfoDireito, "direita ");
 
+        //Todos devolvem o garfo da direita
         devolveGarfo(id, garfoDireito,  "direita");
+
+        //Todos pegam o garfo direita, dando a possibilidade do filosofo aleatorio pegar os 2 garfos,
+        // ja que ele ja tem o esquerdo
         pegaGarfo (id, garfoDireito, "direita");
 
+
+        //Se for um filosofo comum(nao eh aleatorio) pega o garfo da esquerda, se for o aleatorio,
+        // entao ele come e devolve o garfos, em seguida PENSA
         if (filosofoAleatorio != id) {
             devolveGarfo(id, garfoDireito,  "direita");
             pegaGarfo(id, garfoEsquerdo, "esquerda");
@@ -99,16 +111,17 @@ void *filosofo (void *num)
 
             devolveGarfo(id, garfoDireito,  "direita");
             devolveGarfo(id, garfoEsquerdo,  "esquerda");
+            //Escolha de um filosofo aleatorio para pegar o garfo no sentido oposto
             filosofoAleatorio = rand() % numero_filosofos;
 
             pensar(id);
 
         }
-
+        //O filosofo  comum pega o garfo da direita
         pegaGarfo(id, garfoDireito, "direita");
 
         comer(id);
-
+        //O filosofo comum devolve os garfos
         devolveGarfo(id, garfoDireito,  "direita");
         devolveGarfo(id, garfoEsquerdo,  "esquerda");
 
@@ -119,7 +132,7 @@ void *filosofo (void *num)
     printf ("Filosofo %d acabou de comer.\n", id);
     return (NULL);
 }
-
+//Funcao que limita o loop dos filosofos
 int
 comidaNaMesa ()
 {
@@ -135,6 +148,7 @@ comidaNaMesa ()
     return comida;
 }
 
+//Funcao que o filosofo pega o garfo
 void
 pegaGarfo (int filo,
                 int g,
@@ -143,7 +157,7 @@ pegaGarfo (int filo,
     pthread_mutex_lock (&garfo[g]);
     printf ("Filosfo %d FAMINTO: pega  o garfo %d da %s\n", filo, g, lado);
 }
-
+//Funcao em que o filosofo devolve o garfo
 void
 devolveGarfo (int filo, int g, char *lado)
 
@@ -151,13 +165,13 @@ devolveGarfo (int filo, int g, char *lado)
     pthread_mutex_unlock(&garfo[g]);
     printf("Filosfo %d devolve o garfo %d da %s\n", filo, g, lado);
 }
-
+//Funcao que o filosofo fica pensando
 void pensar(int id) {
     printf("Filosofo %d esta PENSANDO\n",id);
-    usleep(tempoPensando*1000);
+    usleep(tempoPensando*1000); //Gasta um tempo em microsegundos
 }
-
+//Funcao que o filosofo fica comendo
 void comer(int id) {
     printf ("Filosfo %d: COMENDO.\n", id);
-    usleep(tempoComendo*1000);
+    usleep(tempoComendo*1000);//Gasta um tempo em microsegundos
 }
