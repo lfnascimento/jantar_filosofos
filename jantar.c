@@ -24,12 +24,51 @@ void mostrar();
 void *acao_filosofo(void *j);
 void pegar_garfo(int i);
 void por_garfo(int i);
-void test(int i);
+void testar(int i);
 void pensar();
 void comer();
 void entrada();
-void core();
+void iniciar();
 void debug_random();
+
+
+void main(){
+	printf("Informe o Número de filósofos: ");
+	scanf("%d",&n_filosofos);
+ 	printf("Informe o tempo médio que cada filósofo gastará comendo (em milissegundos): ");
+    scanf("%d",&tempo_pensando);
+ 	printf("Informe o tempo médio que cada filósofo gastará pensando (em milissegundos): ");
+    scanf("%d",&tempo_comendo);
+	iniciar();
+}
+
+void iniciar(){
+    //Inicializa o estado
+    for(i = 0; i < n_filosofos; i++){
+        estado[i]=0;
+    }
+    mostrar();
+    pthread_t thread[1000];
+    void *thread_result;
+ 
+    //inicia os semáforos
+    sem_init(&mutex,0,1);
+     
+    for(i = 0; i < n_filosofos; i++){
+        sem_init(&sem_fil[i],0,0);
+    }
+ 
+    //cria as threads(filosofos)
+    for(i = 0; i < n_filosofos; i++){
+       pthread_create(&thread[i],NULL,acao_filosofo,&i);
+    }
+ 
+    //faz um join nas threads
+    for(i = 0; i < n_filosofos; i++){
+        pthread_join(thread[i],&thread_result);
+    
+    }
+}
 
 //Calcula a posição do filosofo a esquerda
 int calcular_esquerda(int meio, int total){
@@ -78,7 +117,7 @@ void pegar_garfo(int i){
     sem_wait(&mutex); //Pega o semáforo pra si
     estado[i]=Faminto; //Seta que está com fome
     mostrar(); //Mostra o estado dos outros filosofos
-    test(i); //Tenta pegar os garfos pra comer
+    testar(i); //Tenta pegar os garfos pra comer
     sem_post(&mutex); //Libera o simáforo
     sem_wait(&sem_fil[i]); //Atualiza seu próprio semáforo
 }
@@ -90,13 +129,13 @@ void por_garfo(int i){
     mostrar();
     esquerda = calcular_esquerda(i, n_filosofos);
     direita = calcular_direita(i, n_filosofos);
-    test(esquerda);
-    test(direita);
+    testar(esquerda);
+    testar(direita);
     sem_post(&mutex);
 }
  
 //funcao que testa se o filósofo pode comer
-void test(int i){
+void testar(int i){
    int esquerda, direita;
    esquerda = calcular_esquerda(i, n_filosofos);
    direita = calcular_direita(i, n_filosofos);
@@ -116,44 +155,3 @@ void comer(){
     usleep(gerar_tempo_medio(tempo_comendo));
 }
 
-
-void core(){
-    //Inicializa o estado
-    for(i = 0; i < n_filosofos; i++){
-        estado[i]=0;
-    }
-    mostrar();
-    pthread_t thread[1000];
-    void *thread_result;
- 
-    //inicia os semáforos
-    sem_init(&mutex,0,1);
-     
-    for(i = 0; i < n_filosofos; i++){
-        sem_init(&sem_fil[i],0,0);
-    }
- 
-    //cria as threads(filosofos)
-    for(i = 0; i < n_filosofos; i++){
-       pthread_create(&thread[i],NULL,acao_filosofo,&i);
-    }
- 
-    //faz um join nas threads
-    for(i = 0; i < n_filosofos; i++){
-        pthread_join(thread[i],&thread_result);
-    
-    }
-}
-
-void main(){
-	system("clear");
-	printf("Informe o Número de filósofos: ");
-        scanf("%d",&n_filosofos);
- 	printf("Informe o tempo médio que cada filósofo gastará comendo (em milissegundos): ");
-        scanf("%d",&tempo_pensando);
- 	printf("Informe o tempo médio que cada filósofo gastará pensando (em milissegundos): ");
-        scanf("%d",&tempo_comendo);
-	system("clear");
-	core();
-	
-}
