@@ -10,12 +10,18 @@
 #define FAMINTO 1
 #define COMENDO 2
  
-int i,estado[1000], NumeroDeFilosofos, tempoComendo, tempoPensando;
- 
+int i, NumeroDeFilosofos, tempoComendo, tempoPensando;
+
 //semáforos
 sem_t mutex;
-sem_t sem_fil[1000];
 
+sem_t sem_fil[100];
+//sem_t *sem_fil;
+
+int estado[300];
+//int *estado;
+
+pthread_t *thread;
 
 void mostrar();
 void *filosofo(void *j);
@@ -36,8 +42,13 @@ void main(){
 	scanf("%d",&tempoPensando);
  	printf("Informe o tempo médio que cada filósofo gastará pensando, em milissegundos: ");
 	scanf("%d",&tempoComendo);
-
-	//Inicializa o estado
+    
+    //Alocacao dinamica    
+    //thread = (pthread_t *) malloc(NumeroDeFilosofos*sizeof(pthread_t));    
+    //sem_fil = (sem_t *) malloc(NumeroDeFilosofos*sizeof(sem_t));
+    //estado = (int *)malloc((NumeroDeFilosofos*3)*sizeof(int));  	
+    
+    //Inicializa o estado
 	for(i = 0; i < NumeroDeFilosofos; i++){
     	estado[i]=0;
 	}
