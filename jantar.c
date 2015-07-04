@@ -17,6 +17,17 @@ sem_t mutex;
 sem_t sem_fil[1000];
 
 
+void mostrar();
+void *filosofo(void *j);
+void pegarGarfo(int i);
+void devolverGarfo(int i);
+void intencao(int i);
+void pensar();
+void comer();
+void entrada();
+
+
+
 void main(){
 
 	printf("Informe o Número de filósofos: ");
